@@ -9,8 +9,8 @@ import java.util.UUID;
 public class Match {
     private final UUID id;
     private final String firstTeamId;
-    private int firstTeamScore;
     private final String secondTeamId;
+    private int firstTeamScore;
     private int secondTeamScore;
     private final Instant startTime;
     private Instant endTime;
@@ -46,15 +46,15 @@ public class Match {
         this.secondTeamScore = secondTeamScore;
     }
 
-    public int getTotalScore() {
+    int getTotalScore() {
         return firstTeamScore + secondTeamScore;
     }
 
-    public boolean involves(String teamId) {
+    boolean involves(String teamId) {
         return firstTeamId.equals(teamId) || secondTeamId.equals(teamId);
     }
 
-    public boolean isFinished() {
+    boolean isFinished() {
         return endTime != null;
     }
 

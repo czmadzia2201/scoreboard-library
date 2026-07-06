@@ -20,7 +20,7 @@ class MatchInMemoryStore {
         matches.put(match.getId(), match);
     }
 
-    public Match get(UUID id) {
+    Match get(UUID id) {
         if (id == null) {
             throw new IllegalArgumentException("Match id must not be null.");
         }
@@ -31,14 +31,14 @@ class MatchInMemoryStore {
         return match;
     }
 
-    public List<Match> getSortedMatchesInProgress() {
+    List<Match> getSortedMatchesInProgress() {
         return matches.values().stream()
                 .filter(m -> !m.isFinished())
                 .sorted(SUMMARY_ORDER)
                 .toList();
     }
 
-    public boolean hasConflict(Match match) {
+    boolean hasConflict(Match match) {
         return matches.values().stream()
                 .filter(m -> !m.isFinished())
                 .anyMatch(m ->

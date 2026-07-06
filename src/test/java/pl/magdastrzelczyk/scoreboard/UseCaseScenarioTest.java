@@ -10,12 +10,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
-public class UseCaseScenarioTest {
+class UseCaseScenarioTest {
 
     private final Scoreboard scoreboard = new InMemoryScoreboard();
 
     @Test
-    public void shouldHandleCompleteScoreboardFlow() {
+    void shouldHandleCompleteScoreboardFlow() {
         UUID matchId1 = scoreboard.startMatch("Mexico", "Canada");
         UUID matchId2 = scoreboard.startMatch("USA", "Brazil");
 
