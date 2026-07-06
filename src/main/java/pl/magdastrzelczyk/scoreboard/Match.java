@@ -1,8 +1,11 @@
 package pl.magdastrzelczyk.scoreboard;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -14,6 +17,8 @@ public class Match {
     private int secondTeamScore;
     private final Instant startTime;
     private Instant endTime;
+    @Getter(AccessLevel.NONE)
+    private final List<MatchScoreSnapshot> scoreHistory;
 
     Match(String firstTeamId, String secondTeamId) {
         validateMatch(firstTeamId, secondTeamId);
@@ -23,6 +28,7 @@ public class Match {
         this.firstTeamScore = 0;
         this.secondTeamScore = 0;
         this.startTime = Instant.now();
+        this.scoreHistory = new ArrayList<>();
     }
 
     void finish() {
@@ -44,6 +50,13 @@ public class Match {
         }
         this.firstTeamScore = firstTeamScore;
         this.secondTeamScore = secondTeamScore;
+        this.scoreHistory.add(new MatchScoreSnapshot(
+                this.firstTeamScore, this.secondTeamScore, Instant.now()
+        ));
+    }
+
+    List<MatchScoreSnapshot> getScoreHistory() {
+        return List.copyOf(scoreHistory);
     }
 
     int getTotalScore() {

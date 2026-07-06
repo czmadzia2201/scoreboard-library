@@ -3,7 +3,11 @@ package pl.magdastrzelczyk.scoreboard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class MatchTest {
@@ -34,6 +38,30 @@ class MatchTest {
         match.updateScore(2, 1);
         assertThat(match.getFirstTeamScore()).isEqualTo(2);
         assertThat(match.getSecondTeamScore()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldCreateScoreHistory() throws InterruptedException {
+        Instant before = Instant.now();
+
+        match.updateScore(2, 1);
+        Thread.sleep(10);
+        match.updateScore(3, 1);
+        Thread.sleep(10);
+        match.updateScore(3, 3);
+
+        Instant after = Instant.now();
+
+        List<MatchScoreSnapshot> scoreHistory = match.getScoreHistory();
+        assertThat(scoreHistory)
+                .hasSize(3)
+                .extracting(MatchScoreSnapshot::firstTeamScore, MatchScoreSnapshot::secondTeamScore)
+                .containsExactly(tuple(2, 1), tuple(3, 1), tuple(3, 3));
+
+        assertThat(scoreHistory)
+                .extracting(MatchScoreSnapshot::updateTime)
+                .isSorted()
+                .allSatisfy(instant -> assertThat(instant).isBetween(before, after));
     }
 
     @Test

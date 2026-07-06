@@ -11,4 +11,6 @@ public interface Scoreboard {
     void finishMatch(UUID matchId);
 
     List<Match> getSummary();
+
+    List<MatchScoreSnapshot> getMatchScoreHistory(UUID matchId);
 }

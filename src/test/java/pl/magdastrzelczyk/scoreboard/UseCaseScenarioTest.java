@@ -57,8 +57,14 @@ class UseCaseScenarioTest {
                 .extracting(Match::getFirstTeamScore, Match::getSecondTeamScore)
                 .containsExactly(tuple(0, 5), tuple(1, 3), tuple(2, 2));
 
-        assertThatThrownBy(() -> scoreboard.updateScore(matchId1, 4, 3))
+        assertThatThrownBy(() -> scoreboard.updateScore(matchId1, 4, 5))
                 .isInstanceOf(IllegalStateException.class);
+
+        List<MatchScoreSnapshot> scoreHistory = scoreboard.getMatchScoreHistory(matchId1);
+        assertThat(scoreHistory)
+                .hasSize(3)
+                .extracting(MatchScoreSnapshot::firstTeamScore, MatchScoreSnapshot::secondTeamScore)
+                .containsExactly(tuple(2, 1), tuple(3, 3), tuple(4, 4));
 
         UUID matchId5 = scoreboard.startMatch("Mexico", "France");
 

@@ -43,4 +43,10 @@ public class InMemoryScoreboard implements Scoreboard {
     public synchronized List<Match> getSummary() {
         return matchStore.getSortedMatchesInProgress();
     }
+
+    @Override
+    public synchronized List<MatchScoreSnapshot> getMatchScoreHistory(UUID matchId) {
+        Match match = matchStore.get(matchId);
+        return match.getScoreHistory();
+    }
 }

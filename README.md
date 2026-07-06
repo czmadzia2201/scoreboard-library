@@ -2,12 +2,14 @@
 
 A simple Java library for managing a live football scoreboard.
 
-The following sections describe the assumptions, design decisions and trade-offs made during the implementation. 
+## Assumptions, decisions, trade-offs
+
+The following sections describe the assumptions, design decisions and trade-offs made during the implementation.
 Since these topics are closely related, they are presented together by subject rather than separated into independent sections.
 
-My objective was to keep the library clean and simple rather than complicate it with features beyond the requirements. 
-Several possible extensions were deliberately not added, 
-such as team management, additional match states (for example `not started`), additional scoring options, etc.
+My objective was to keep the library clean and simple rather than complicate it with features beyond the requirements.
+Several possible extensions were deliberately not added,
+such as team management, additional match states (for example `not started`), additional scoring options.
 
 ### Live scoreboard
 
@@ -48,7 +50,7 @@ This state can be derived from `endTime`, and the domain method `isFinished()` k
 ### Match validation
 
 Team identifiers are validated inside the `Match` constructor.
-A Match object is created before checking for conflicts so that all validation rules remain in one place.
+A match object is created before checking for conflicts so that all validation rules remain in one place.
 This is a small cost that allows clear responsibility separation (validation in constructor, 
 conflict check in the in-memory store). 
 
@@ -58,6 +60,15 @@ The public scoreboard operations are synchronized.
 This ensures that operations such as "check for conflict and start match" are atomic. 
 A `ConcurrentHashMap` alone would not be sufficient for this, because it would make individual map operations thread-safe but not multi-step scoreboard operations.
 More advanced locking strategies, such as `ReadWriteLock`, were intentionally avoided to keep the implementation simple and appropriate for the size of the task.
+
+## Additional feature
+
+As an additional feature, I implemented score history tracking for each match.
+
+Each score update creates an immutable `MatchScoreSnapshot` containing the scores of both teams and the update timestamp. 
+The history can be retrieved through the public API and is available for both active and finished matches.
+
+This feature was chosen because it naturally extends the existing domain model and provides potential business value.
 
 ## Usage / Public API
 
@@ -71,4 +82,10 @@ scoreboard.updateScore(matchId, 0, 5);
 List<Match> summary = scoreboard.getSummary();
 
 scoreboard.finishMatch(matchId);
+
+// Additional feature
+
+List<MatchScoreSnapshot> scoreHistory = scoreboard.getMatchScoreHistory(matchId);
+```
+
 

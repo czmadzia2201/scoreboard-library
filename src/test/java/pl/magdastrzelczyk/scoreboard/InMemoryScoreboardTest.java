@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class InMemoryScoreboardTest {
@@ -84,6 +85,24 @@ class InMemoryScoreboardTest {
         assertThatThrownBy(() -> scoreboard.updateScore(matchId, 2, 2))
                 .isInstanceOf(MatchNotFoundException.class)
                 .hasMessageContaining("Match not found: " + matchId);
+    }
+
+    @Test
+    void shouldGetMatchScoreHistory() {
+        scoreboard.updateScore(matchId1, 2, 1);
+        scoreboard.updateScore(matchId1, 2, 2);
+        scoreboard.updateScore(matchId1, 2, 3);
+
+        List<MatchScoreSnapshot> scoreHistory = scoreboard.getMatchScoreHistory(matchId1);
+
+        assertThat(scoreHistory)
+                .hasSize(4)
+                .extracting(MatchScoreSnapshot::firstTeamScore, MatchScoreSnapshot::secondTeamScore)
+                .containsExactly(tuple(1, 1), tuple(2, 1), tuple(2, 2), tuple(2, 3));
+
+        assertThat(scoreHistory)
+                .extracting(MatchScoreSnapshot::updateTime)
+                .isSorted();
     }
 
     @Test
